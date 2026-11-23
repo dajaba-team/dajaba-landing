@@ -51,6 +51,10 @@ const MenuLink = styled.a`
   &:hover {
     color: ${({ theme }) => theme.color.primary};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoint.mobile}) {
+    display: none;
+  }
 `
 
 const GithubButton = styled.a`

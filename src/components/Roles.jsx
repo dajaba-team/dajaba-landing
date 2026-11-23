@@ -1,6 +1,8 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import bearSuperSol from '../assets/bear-super-sol.png'
 import { ROLES } from '../data/content'
+import CheckList from './CheckList'
+import Reveal from './common/Reveal'
 import { Container, Eyebrow, Lead, Section, Title } from './common/styles'
 
 const Inner = styled(Container)`
@@ -34,6 +36,7 @@ const RoleGrid = styled.div`
 const RoleCard = styled.div`
   background: ${({ theme }) => theme.color.white};
   color: ${({ theme }) => theme.color.ink};
+  height: 100%;
   border-radius: 18px;
   padding: 20px;
   display: flex;
@@ -51,21 +54,19 @@ const RoleCard = styled.div`
   }
 `
 
-const Tags = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`
-
-const Tag = styled.span`
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 14px;
+const float = keyframes`
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-2deg); }
 `
 
 const Character = styled.img`
   display: block;
+  animation: ${float} 5s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
   flex: 0 1 320px;
   width: 320px;
   height: auto;
@@ -82,18 +83,16 @@ export default function Roles() {
             <Lead $onDark>{ROLES.description}</Lead>
           </Head>
           <RoleGrid>
-            {ROLES.roles.map((role) => (
-              <RoleCard key={role.name}>
-                <strong>{role.name}</strong>
-                <span>{role.text}</span>
-              </RoleCard>
+            {ROLES.roles.map((role, index) => (
+              <Reveal key={role.name} delay={index * 120}>
+                <RoleCard>
+                  <strong>{role.name}</strong>
+                  <span>{role.text}</span>
+                </RoleCard>
+              </Reveal>
             ))}
           </RoleGrid>
-          <Tags>
-            {ROLES.tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </Tags>
+          <CheckList items={ROLES.principles} variant="pill" />
         </Copy>
         <Character src={bearSuperSol} alt="슈퍼 SOL 옷을 입은 신한은행 캐릭터" width="1254" height="1254" />
       </Inner>

@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 import { STR_REPORT } from '../data/content'
+import { useInView } from '../hooks/useInView'
 import CheckList from './CheckList'
+import Reveal from './common/Reveal'
 import { Container, Section, Visual, VisualLabel } from './common/styles'
 import FeatureRow from './FeatureRow'
 
@@ -25,6 +27,18 @@ const SectionCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  opacity: ${({ $shown }) => ($shown ? 1 : 0)};
+  transform: scale(${({ $shown }) => ($shown ? 1 : 0.94)});
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+  transition-delay: ${({ $delay }) => $delay}ms;
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 
   strong {
     font-size: 15px;
@@ -54,6 +68,7 @@ const CheckGrid = styled.div`
 
 const CheckCard = styled.div`
   border: 1px solid ${({ theme }) => theme.color.line};
+  height: 100%;
   border-radius: 22px;
   padding: 30px;
   display: flex;
@@ -77,13 +92,16 @@ const CheckText = styled.p`
   color: ${({ theme }) => theme.color.muted};
 `
 
+// 7개 항목이 하나씩 채워지듯 나타나요.
 function StrSectionsSample() {
+  const [ref, inView] = useInView({ threshold: 0.4 })
+
   return (
     <Visual $tone="surface" aria-label={STR_REPORT.sectionsLabel}>
       <VisualLabel>{STR_REPORT.sectionsLabel}</VisualLabel>
-      <SectionGrid>
-        {STR_REPORT.sections.map((item) => (
-          <SectionCard key={item.name} $highlight={item.highlight}>
+      <SectionGrid ref={ref}>
+        {STR_REPORT.sections.map((item, index) => (
+          <SectionCard key={item.name} $highlight={item.highlight} $shown={inView} $delay={index * 140}>
             <strong>{item.name}</strong>
             <span>{item.question}</span>
           </SectionCard>
@@ -100,25 +118,33 @@ export default function StrReport() {
     <Section id="str">
       <Container>
         <Stack>
-          <FeatureRow
-            badge={STR_REPORT.badge}
-            title={STR_REPORT.title}
-            paragraphs={STR_REPORT.paragraphs}
-            visual={<StrSectionsSample />}
-          />
+          <Reveal>
+            <FeatureRow
+              badge={STR_REPORT.badge}
+              title={STR_REPORT.title}
+              paragraphs={STR_REPORT.paragraphs}
+              visual={<StrSectionsSample />}
+            />
+          </Reveal>
           <div>
-            <CheckTitle>{STR_REPORT.checkTitle}</CheckTitle>
+            <Reveal>
+              <CheckTitle>{STR_REPORT.checkTitle}</CheckTitle>
+            </Reveal>
             <CheckGrid>
-              <CheckCard>
-                <CheckLabel>{codeCheck.label}</CheckLabel>
-                <CheckHeading>{codeCheck.title}</CheckHeading>
-                <CheckText>{codeCheck.text}</CheckText>
-              </CheckCard>
-              <CheckCard>
-                <CheckLabel>{aiCheck.label}</CheckLabel>
-                <CheckHeading>{aiCheck.title}</CheckHeading>
-                <CheckList items={aiCheck.criteria} />
-              </CheckCard>
+              <Reveal>
+                <CheckCard>
+                  <CheckLabel>{codeCheck.label}</CheckLabel>
+                  <CheckHeading>{codeCheck.title}</CheckHeading>
+                  <CheckText>{codeCheck.text}</CheckText>
+                </CheckCard>
+              </Reveal>
+              <Reveal delay={150}>
+                <CheckCard>
+                  <CheckLabel>{aiCheck.label}</CheckLabel>
+                  <CheckHeading>{aiCheck.title}</CheckHeading>
+                  <CheckList items={aiCheck.criteria} stepMs={260} />
+                </CheckCard>
+              </Reveal>
             </CheckGrid>
           </div>
         </Stack>
