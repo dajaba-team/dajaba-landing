@@ -183,6 +183,8 @@ export const ARCHITECTURE = {
     title: "이렇게 만들었어요",
     description:
         "업무 서버와 AI 서버를 나누고, 오래 걸리는 작업은 큐로 돌려 화면이 멈추지 않게 했어요. 운영 상태와 AI 호출은 대시보드로 지켜봐요.",
+    videoId: "2RQh4VRX4uI",
+    videoTitle: "다자바 아키텍처 소개 영상",
     blocks: [
         {
             name: "업무 서버",
